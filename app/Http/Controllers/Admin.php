@@ -70,7 +70,7 @@ class Admin extends Controller
 
         $admin = User::where('email', $req->email)->first();
 
-        if($admin && $admin->type == 'admin') {
+        if ($admin && $admin->type == 'admin') {
             $date = date('Y-m-d H:i:s');
             $req->session()->put('admin', $admin);
             Session::put('rexkod_admin_id', $admin->id);
@@ -79,8 +79,6 @@ class Admin extends Controller
 
 
             return redirect('admin/index');
-
-
         } else {
             session()->put('failed', 'Invalid email');
             return redirect('admin/login');
@@ -103,7 +101,7 @@ class Admin extends Controller
         // dd($result);
         $data = [
             'courses' => $result,
-           ];
+        ];
         //    dd($data['courses']->course_name);
         return view('admin/index', ['data' => $data]);
         // return view('admin/index');
@@ -114,7 +112,7 @@ class Admin extends Controller
         $result = Quiz_result::where('quiz_id', $id)->get();
         $data = [
             'result' => $result,
-           ];
+        ];
 
         return view('admin/all_results', ['data' => $data]);
     }
@@ -124,7 +122,7 @@ class Admin extends Controller
         $result = Subject::get();
         $data = [
             'subjects' => $result,
-           ];
+        ];
         return view('admin/add_subject', ['data' => $data]);
     }
 
@@ -134,7 +132,7 @@ class Admin extends Controller
         $result = User::where('type', 'trainer')->get();
         $data = [
             'trainers' => $result,
-           ];
+        ];
         return view('/admin/trainers', ['data' => $data]);
     }
 
@@ -146,7 +144,7 @@ class Admin extends Controller
         $result = Subject::get();
         $data = [
             'subjects' => $result,
-           ];
+        ];
         session()->put('success', "Subject Added");
         return redirect('/admin/all_courses');
     }
@@ -159,7 +157,7 @@ class Admin extends Controller
         $data = [
             'courses' => $courses,
             'subjects' => $result,
-           ];
+        ];
         return view('admin/create_quiz', ['data' => $data]);
     }
 
@@ -176,7 +174,7 @@ class Admin extends Controller
             // if ($extension1 == "png" || $extension1 == "jpeg" || $extension1 == "jpg") {
             $filename = Str::random(4) . time() . '.' . $extension1;
             $quiz->image = $req->file('quiz_photo')->move(('uploads'), $filename);
-        // }
+            // }
         } else {
             $quiz->image = $quiz->quiz_photo;
         }
@@ -201,7 +199,7 @@ class Admin extends Controller
         // $quiz = Quiz::where('subject', $subject)->get();
         $last_quiz = Quiz::latest()->first();
         $questions = $last_quiz->questions;
-        if($questions == null) {
+        if ($questions == null) {
             $questions = $que_id;
         } else {
             $questions = $questions . ",$que_id";
@@ -209,7 +207,7 @@ class Admin extends Controller
 
 
         Quiz::where('id', $last_quiz->id)->update([
-        'questions' => $questions,
+            'questions' => $questions,
         ]);
 
         // $question = Quiz_master::where('subject', $subject)->get();
@@ -227,7 +225,7 @@ class Admin extends Controller
         $last_quiz = Quiz::latest()->first();
         $questions = explode(',', $last_quiz->questions);
         $new_question = 0;
-        foreach($questions as $question) {
+        foreach ($questions as $question) {
             if ((int)$question != $que_id) {
                 $value[] = $question;
                 $new_question = implode(',', $value);
@@ -239,7 +237,7 @@ class Admin extends Controller
         // dd($new_question);
         Quiz::where('id', $last_quiz->id)->update([
             'questions' => $new_question,
-            ]);
+        ]);
 
         session()->put('success', "Question Added to Test!");
         return redirect('admin/add_quiz');
@@ -253,7 +251,7 @@ class Admin extends Controller
         $result = Subject::get();
         $data = [
             'subjects' => $result,
-           ];
+        ];
         return view('admin/add_question', ['data' => $data]);
     }
     public function add_question(Request $req)
@@ -261,7 +259,7 @@ class Admin extends Controller
         $question = new Quiz_master();
         $question->subject = $req->subject;
 
-        if(!empty($req->code)) {
+        if (!empty($req->code)) {
             $question->question_code = $req->code;
         }
         if (!empty($req->file('question_image'))) {
@@ -269,7 +267,7 @@ class Admin extends Controller
             // if ($extension1 == "png" || $extension1 == "jpeg" || $extension1 == "jpg") {
             $filename = Str::random(4) . time() . '.' . $extension1;
             $question->question_image = $req->file('question_image')->move(('uploads'), $filename);
-        // }
+            // }
         } else {
             $question->question_image = 'question_image';
         }
@@ -285,7 +283,7 @@ class Admin extends Controller
             // if ($extension1 == "png" || $extension1 == "jpeg" || $extension1 == "jpg") {
             $filename = Str::random(4) . time() . '.' . $extension1;
             $question->option1_img = $req->file('option1_img')->move(('uploads'), $filename);
-        // }
+            // }
         } else {
             $question->option1_img = 'option1_img';
         }
@@ -294,7 +292,7 @@ class Admin extends Controller
             // if ($extension1 == "png" || $extension1 == "jpeg" || $extension1 == "jpg") {
             $filename = Str::random(4) . time() . '.' . $extension1;
             $question->option2_img = $req->file('option2_img')->move(('uploads'), $filename);
-        // }
+            // }
         } else {
             $question->option2_img = 'option2_img';
         }
@@ -304,7 +302,7 @@ class Admin extends Controller
             // if ($extension1 == "png" || $extension1 == "jpeg" || $extension1 == "jpg") {
             $filename = Str::random(4) . time() . '.' . $extension1;
             $question->option3_img = $req->file('option3_img')->move(('uploads'), $filename);
-        // }
+            // }
         } else {
             $question->option3_img = 'option3_img';
         }
@@ -313,7 +311,7 @@ class Admin extends Controller
             // if ($extension1 == "png" || $extension1 == "jpeg" || $extension1 == "jpg") {
             $filename = Str::random(4) . time() . '.' . $extension1;
             $question->option4_img = $req->file('option4_img')->move(('uploads'), $filename);
-        // }
+            // }
         } else {
             $question->option4_img = 'option4_img';
         }
@@ -329,17 +327,15 @@ class Admin extends Controller
         $result = Subject::get();
 
         $question = new Quiz_master();
-        if($req->subject) {
+        if ($req->subject) {
             $quiz_master = Quiz_master::where('subject', $req->subject)->get();
-
         } else {
             $quiz_master = Quiz_master::get();
-
         }
         $data = [
             'subjects' => $result,
             'question' => $quiz_master,
-           ];
+        ];
 
         return view('admin/quiz_master', ['data' => $data]);
     }
@@ -386,7 +382,6 @@ class Admin extends Controller
 
             $filename = Str::random(4) . time() . '.' . $extension1;
             $course->course_video = $req->file('course_video')->move(('uploads'), $filename);
-
         } else {
             $course->course_video = $course->course_video;
         }
@@ -396,7 +391,7 @@ class Admin extends Controller
 
         $section1 = $req->section_name1;
 
-        for($i = 0; $i < $rows; $i++) {
+        for ($i = 0; $i < $rows; $i++) {
 
             $section_name = 'section_name' . $i;
             $section_desc = 'section_desc' . $i;
@@ -409,7 +404,6 @@ class Admin extends Controller
                 // 'section_file' =>  $section_file,
 
             ];
-
         }
 
 
@@ -426,7 +420,7 @@ class Admin extends Controller
 
         // separete tablevfor the section data
         $last_course = Course::latest()->first();
-        for($i = 0; $i < $rows; $i++) {
+        for ($i = 0; $i < $rows; $i++) {
             $section_name = 'section_name' . $i;
             $section_desc = 'section_desc' . $i;
             $section = new Section();
@@ -434,7 +428,6 @@ class Admin extends Controller
             $section->section_name = $req->$section_name;
             $section->section_desc = $req->$section_desc;
             $section->save();
-
         }
         session()->put('success', "Course Added!");
         return redirect('admin/all_courses');
@@ -445,7 +438,7 @@ class Admin extends Controller
         $students = Student::get();
         $data = [
             'students' => $students,
-           ];
+        ];
         return view('admin/all_users', ['data' => $data]);
     }
 
@@ -464,7 +457,6 @@ class Admin extends Controller
 
             $filename = Str::random(4) . time() . '.' . $extension1;
             $internship_image = $req->file('internship_image')->move(('uploads'), $filename);
-
         } else {
             $internship_image = 'internship_image';
         }
@@ -521,7 +513,7 @@ class Admin extends Controller
         $data = [
             'courses' => $course,
             // 'sections' => $all_sections,
-           ];
+        ];
         return view('admin/create_assesments', ['data' => $data]);
     }
     public function create_assesments(Request $req)
@@ -531,7 +523,7 @@ class Admin extends Controller
         $assesment->course_id = $req->course;
         $assesment->section_name = $req->section;
         $assesment->video = $req->video;
-        if(!empty($req->code)) {
+        if (!empty($req->code)) {
             $assesment->question_code = $req->code;
         }
         if (!empty($req->file('question_image'))) {
@@ -539,7 +531,7 @@ class Admin extends Controller
             // if ($extension1 == "png" || $extension1 == "jpeg" || $extension1 == "jpg") {
             $filename = Str::random(4) . time() . '.' . $extension1;
             $assesment->question_image = $req->file('question_image')->move(('uploads'), $filename);
-        // }
+            // }
         } else {
             $assesment->question_image = 'question_image';
         }
@@ -556,7 +548,7 @@ class Admin extends Controller
             // if ($extension1 == "png" || $extension1 == "jpeg" || $extension1 == "jpg") {
             $filename = Str::random(4) . time() . '.' . $extension1;
             $assesment->option1_img = $req->file('option1_img')->move(('uploads'), $filename);
-        // }
+            // }
         } else {
             $assesment->option1_img = 'option1_img';
         }
@@ -565,7 +557,7 @@ class Admin extends Controller
             // if ($extension1 == "png" || $extension1 == "jpeg" || $extension1 == "jpg") {
             $filename = Str::random(4) . time() . '.' . $extension1;
             $assesment->option2_img = $req->file('option2_img')->move(('uploads'), $filename);
-        // }
+            // }
         } else {
             $assesment->option2_img = 'option2_img';
         }
@@ -575,7 +567,7 @@ class Admin extends Controller
             // if ($extension1 == "png" || $extension1 == "jpeg" || $extension1 == "jpg") {
             $filename = Str::random(4) . time() . '.' . $extension1;
             $assesment->option3_img = $req->file('option3_img')->move(('uploads'), $filename);
-        // }
+            // }
         } else {
             $assesment->option3_img = 'option3_img';
         }
@@ -584,7 +576,7 @@ class Admin extends Controller
             // if ($extension1 == "png" || $extension1 == "jpeg" || $extension1 == "jpg") {
             $filename = Str::random(4) . time() . '.' . $extension1;
             $assesment->option4_img = $req->file('option4_img')->move(('uploads'), $filename);
-        // }
+            // }
         } else {
             $assesment->option4_img = 'option4_img';
         }
@@ -619,7 +611,7 @@ class Admin extends Controller
     {
 
         $videos = Video::where('course_id', $req->courseId)
-                        ->where('section_id', $req->sectionId)->get();
+            ->where('section_id', $req->sectionId)->get();
         // $videos=$video->video_name;
         // dd($sections);
         // return $videos;
@@ -632,7 +624,7 @@ class Admin extends Controller
         $data = [
             'courses' => $course,
 
-           ];
+        ];
 
         return view('admin/add_videos', ['data' => $data]);
     }
@@ -653,7 +645,7 @@ class Admin extends Controller
 
 
         $rows = $req->no_of_rows;
-        for($i = 0 ; $i < $rows; $i++) {
+        for ($i = 0; $i < $rows; $i++) {
             $videos = new Video();
             $videos->course_id = $req->course;
             $videos->section_id = $req->section;
@@ -665,7 +657,6 @@ class Admin extends Controller
 
         session()->put('success', "Video Added!");
         return redirect('admin/add_videos');
-
     }
 
     public function all_courses()
@@ -690,7 +681,7 @@ class Admin extends Controller
             'courses' => $course,
             'sections' => $sections,
             'trainer' => $trainer,
-           ];
+        ];
 
         return view('admin/default_course_details', ['data' => $data]);
     }
@@ -707,7 +698,7 @@ class Admin extends Controller
         $all_quiz = Quiz::where('created_by', 'admin')->get();
         $data = [
             'all_quiz' => $all_quiz,
-           ];
+        ];
         return view('admin/tests', ['data' => $data]);
     }
     public function quizzes()
@@ -716,7 +707,7 @@ class Admin extends Controller
         $all_quiz = Quiz::where('created_by', 'recruiter')->get();
         $data = [
             'all_quiz' => $all_quiz,
-           ];
+        ];
         return view('admin/quizzes', ['data' => $data]);
     }
     public function assesments()
@@ -727,7 +718,7 @@ class Admin extends Controller
         $data = [
             'courses' => $course,
 
-           ];
+        ];
         return view('admin/assesments', ['data' => $data]);
     }
 
@@ -770,7 +761,7 @@ class Admin extends Controller
         $data = [
             'courses' => $course,
 
-           ];
+        ];
         return view('admin/create_mini_projects', ['data' => $data]);
     }
     public function create_mini_projects(Request $req)
@@ -786,7 +777,7 @@ class Admin extends Controller
             // if ($extension1 == "png" || $extension1 == "jpeg" || $extension1 == "jpg") {
             $filename = Str::random(4) . time() . '.' . $extension1;
             $projects->project_image = $req->file('project_image')->move(('uploads'), $filename);
-        // }
+            // }
         } else {
             $projects->project_image = 'project_image';
         }
@@ -809,7 +800,7 @@ class Admin extends Controller
         // }
         $data = [
             'quizzes' => $quizzes,
-           ];
+        ];
 
         return view('admin/test_details', ['data' => $data]);
     }
@@ -818,7 +809,7 @@ class Admin extends Controller
         $assessments = Assesment::where('course_id', $id)->get();
         $data = [
             'assessments' => $assessments,
-           ];
+        ];
         return view('admin/view_assesment_single', ['data' => $data]);
     }
     public function enrolled_students($id)
@@ -826,7 +817,7 @@ class Admin extends Controller
         $enrolled_students = Enrolled_course::where('course_id', $id)->get();
         $data = [
             'enrolled_students' => $enrolled_students,
-           ];
+        ];
         return view('admin/enrolled_students', ['data' => $data]);
     }
 
@@ -835,7 +826,7 @@ class Admin extends Controller
         $quizzes = Quiz::where('id', $id)->first();
         $data = [
             'quizzes' => $quizzes,
-           ];
+        ];
         return view('admin/quiz_details', ['data' => $data]);
     }
 
@@ -845,7 +836,7 @@ class Admin extends Controller
         $labs = Lab::get();
         $data = [
             'labs' => $labs,
-           ];
+        ];
 
         return view('admin/labs', ['data' => $data]);
     }
@@ -856,10 +847,9 @@ class Admin extends Controller
 
         $data = [
             'courses' => $course,
-           ];
+        ];
 
         return view('admin/add_lab', ['data' => $data]);
-
     }
 
 
@@ -869,9 +859,8 @@ class Admin extends Controller
 
         $data = [
             'lab' => $lab,
-           ];
+        ];
         return view('admin/lab', ['data' => $data]);
-
     }
 
     public function add_lab(Request $req)
@@ -886,7 +875,6 @@ class Admin extends Controller
 
         session()->put('success', "Lab Added!");
         return redirect('admin/labs');
-
     }
     public function create_task_view()
     {
@@ -909,7 +897,6 @@ class Admin extends Controller
         $internship_task->save();
         session()->put('success', "Task Added!");
         return redirect('admin/all_internships');
-
     }
     public function change_password_view()
     {
@@ -924,10 +911,11 @@ class Admin extends Controller
     public function change_password(Request $req)
     {
         User::where('id', session('rexkod_admin_id'))
-                    ->update(['name' => $req->name,
-                    'email' => $req->email,
-                    'password' => Hash::make($req->password),
-                ]);
+            ->update([
+                'name' => $req->name,
+                'email' => $req->email,
+                'password' => Hash::make($req->password),
+            ]);
 
         $user = User::where('id', session('rexkod_admin_id'))->first();
 
@@ -947,12 +935,10 @@ class Admin extends Controller
         $user->save();
         session()->put('success', "Trainer Added!");
         return redirect('/admin/trainers');
-
     }
 
     public function student_profile($id)
     {
-
         $all_internships = Internship_application::where('student_id', $id)->get();
         $all_qna = Qna::where('q_created_by', $id)->get();
         $quiz_result = Quiz_result::where('user_id', $id)->get();
@@ -968,7 +954,6 @@ class Admin extends Controller
             'courses' => $courses,
         ];
 
-        // die($courses);
         return view('admin/student_profile', ['data' => $data]);
     }
     public function create_project_task_view()
@@ -1021,7 +1006,7 @@ class Admin extends Controller
             // if ($extension1 == "png" || $extension1 == "jpeg" || $extension1 == "jpg") {
             $filename = Str::random(4) . time() . '.' . $extension1;
             $ebook->image = $req->file('ebook_image')->move(('uploads'), $filename);
-        // }
+            // }
         } else {
             $ebook->image = 'ebook_image';
         }
@@ -1106,26 +1091,25 @@ class Admin extends Controller
         $ebook_elements->element_name = $element->element_name;
 
         // heading and paragraph
-        if($req->element_name == 1) {
+        if ($req->element_name == 1) {
             $ebook_elements->heading_type = $req->heading_type;
         }
-        if(isset($req->content)) {
+        if (isset($req->content)) {
             $ebook_elements->content = $req->content;
         }
         // code
-        if(isset($req->code)) {
+        if (isset($req->code)) {
             $ebook_elements->code = $req->code;
             if (!empty($req->file('memory'))) {
                 $extension1 = $req->file('memory')->extension();
                 // if ($extension1 == "png" || $extension1 == "jpeg" || $extension1 == "jpg") {
                 $filename = Str::random(4) . time() . '.' . $extension1;
                 $ebook_elements->memory = $req->file('memory')->move(('uploads'), $filename);
-            // }
+                // }
             } else {
                 $ebook_elements->memory = null;
             }
             $ebook_elements->output = $req->output;
-
         }
         // image
         if (!empty($req->file('image'))) {
@@ -1133,14 +1117,14 @@ class Admin extends Controller
             // if ($extension1 == "png" || $extension1 == "jpeg" || $extension1 == "jpg") {
             $filename = Str::random(4) . time() . '.' . $extension1;
             $ebook_elements->image = $req->file('image')->move(('uploads'), $filename);
-        // }
+            // }
         } else {
             $ebook_elements->image = null;
         }
         // image-2-option
-        if($req->element_name == 5) {
+        if ($req->element_name == 5) {
             $ebook_elements->image_type = $req->image_type;
-            if($req->image_heading) {
+            if ($req->image_heading) {
                 $ebook_elements->image_heading = $req->image_heading;
             }
             $ebook_elements->image_text_1 = $req->image_text_1;
@@ -1149,17 +1133,17 @@ class Admin extends Controller
             $ebook_elements->image_desc_2 = $req->image_desc_2;
         }
         // image-3-option
-        if($req->element_name == 6) {
+        if ($req->element_name == 6) {
             $ebook_elements->image_type = $req->image_type;
             $ebook_elements->image_heading = $req->image_heading;
             $ebook_elements->image_subheading = $req->image_subheading;
-            if($req->image_subtext_1) {
+            if ($req->image_subtext_1) {
                 $ebook_elements->image_subtext_1 = $req->image_subtext_1;
             }
-            if($req->image_subtext_2) {
+            if ($req->image_subtext_2) {
                 $ebook_elements->image_subtext_2 = $req->image_subtext_2;
             }
-            if($req->image_subtext_3) {
+            if ($req->image_subtext_3) {
                 $ebook_elements->image_subtext_3 = $req->image_subtext_3;
             }
             $ebook_elements->image_text_1 = $req->image_text_1;
@@ -1168,25 +1152,24 @@ class Admin extends Controller
             $ebook_elements->image_desc_2 = $req->image_desc_2;
             $ebook_elements->image_text_3 = $req->image_text_3;
             $ebook_elements->image_desc_3 = $req->image_desc_3;
-
         }
         // image-3-option
-        if($req->element_name == 7) {
+        if ($req->element_name == 7) {
             $ebook_elements->image_type = $req->image_type;
             $ebook_elements->image_heading = $req->image_heading;
-            if($req->image_subheading) {
+            if ($req->image_subheading) {
                 $ebook_elements->image_subheading = $req->image_subheading;
             }
-            if($req->image_subtext_1) {
+            if ($req->image_subtext_1) {
                 $ebook_elements->image_subtext_1 = $req->image_subtext_1;
             }
-            if($req->image_subtext_2) {
+            if ($req->image_subtext_2) {
                 $ebook_elements->image_subtext_2 = $req->image_subtext_2;
             }
-            if($req->image_subtext_3) {
+            if ($req->image_subtext_3) {
                 $ebook_elements->image_subtext_3 = $req->image_subtext_3;
             }
-            if($req->image_subtext_4) {
+            if ($req->image_subtext_4) {
                 $ebook_elements->image_subtext_4 = $req->image_subtext_4;
             }
             $ebook_elements->image_text_1 = $req->image_text_1;
@@ -1198,16 +1181,16 @@ class Admin extends Controller
             $ebook_elements->image_text_4 = $req->image_text_4;
             $ebook_elements->image_desc_4 = $req->image_desc_4;
         }
-        if($req->element_name == 8) {
+        if ($req->element_name == 8) {
             $ebook_elements->image_type = $req->image_type;
             $ebook_elements->image_heading = $req->image_heading;
-            if($req->image_subheading) {
+            if ($req->image_subheading) {
                 $ebook_elements->image_subheading = $req->image_subheading;
             }
-            if($req->image_subheading_2) {
+            if ($req->image_subheading_2) {
                 $ebook_elements->image_subheading_2 = $req->image_subheading_2;
             }
-            if($req->image_heading_2) {
+            if ($req->image_heading_2) {
                 $ebook_elements->image_heading_2 = $req->image_heading_2;
             }
             $ebook_elements->image_text_1 = $req->image_text_1;
@@ -1221,16 +1204,16 @@ class Admin extends Controller
             $ebook_elements->image_text_5 = $req->image_text_5;
             $ebook_elements->image_desc_5 = $req->image_desc_5;
         }
-        if($req->element_name == 9) {
+        if ($req->element_name == 9) {
             $ebook_elements->image_type = $req->image_type;
             $ebook_elements->image_heading = $req->image_heading;
-            if($req->image_subheading) {
+            if ($req->image_subheading) {
                 $ebook_elements->image_subheading = $req->image_subheading;
             }
-            if($req->image_subheading_2) {
+            if ($req->image_subheading_2) {
                 $ebook_elements->image_subheading_2 = $req->image_subheading_2;
             }
-            if($req->image_heading_2) {
+            if ($req->image_heading_2) {
                 $ebook_elements->image_heading_2 = $req->image_heading_2;
             }
             $ebook_elements->image_text_1 = $req->image_text_1;
@@ -1246,7 +1229,7 @@ class Admin extends Controller
             $ebook_elements->image_text_6 = $req->image_text_6;
             $ebook_elements->image_desc_6 = $req->image_desc_6;
         }
-        if($req->element_name == 10) {
+        if ($req->element_name == 10) {
             $ebook_elements->image_type = $req->image_type;
             $ebook_elements->image_heading = $req->image_heading;
 
@@ -1265,10 +1248,10 @@ class Admin extends Controller
             $ebook_elements->image_text_7 = $req->image_text_7;
             $ebook_elements->image_desc_7 = $req->image_desc_7;
         }
-        if($req->element_name == 11) {
+        if ($req->element_name == 11) {
             $ebook_elements->image_type = $req->image_type;
             $ebook_elements->image_heading = $req->image_heading;
-            if($req->image_heading_2) {
+            if ($req->image_heading_2) {
                 $ebook_elements->image_heading_2 = $req->image_heading_2;
             }
 
@@ -1289,7 +1272,7 @@ class Admin extends Controller
             $ebook_elements->image_text_8 = $req->image_text_8;
             $ebook_elements->image_desc_8 = $req->image_desc_8;
         }
-        if($req->element_name == 13) {
+        if ($req->element_name == 13) {
             $ebook_elements->image_type = $req->image_type;
             $ebook_elements->image_heading = $req->image_heading;
 
@@ -1314,12 +1297,12 @@ class Admin extends Controller
             $ebook_elements->image_text_10 = $req->image_text_10;
             $ebook_elements->image_desc_10 = $req->image_desc_10;
         }
-        if($req->element_name == 14) {
+        if ($req->element_name == 14) {
             $ebook_elements->list_type = $req->list_type;
             $ebook_elements->list_heading = $req->list_heading;
             $ebook_elements->list_points = implode(',', $req->list_points);
         }
-        if($req->element_name == 17) {
+        if ($req->element_name == 17) {
             $jsonData = array(
                 'columns' => $req->columns,
                 'rows' => $req->rows,
@@ -1328,24 +1311,24 @@ class Admin extends Controller
             $table_data = json_encode($jsonData);
             $ebook_elements->table_data = $table_data;
         }
-        if($req->element_name == 18) {
+        if ($req->element_name == 18) {
 
             if (!empty($req->file('gif_file'))) {
                 $extension1 = $req->file('gif_file')->extension();
                 // if ($extension1 == "png" || $extension1 == "jpeg" || $extension1 == "jpg") {
                 $filename = Str::random(4) . time() . '.' . $extension1;
                 $ebook_elements->image = $req->file('gif_file')->move(('uploads'), $filename);
-            // }
+                // }
             } else {
                 $ebook_elements->image = null;
             }
         }
-        if($req->element_name == 19) {
+        if ($req->element_name == 19) {
             $ebook_elements->example_text = implode(',', $req->example_text);
             $ebook_elements->example_description = implode(',', $req->example_description);
             $ebook_elements->practice_description = implode(',', $req->practice_description);
         }
-        if($req->element_name == 20) {
+        if ($req->element_name == 20) {
             $example_gifs = [];
             // foreach($req->example_gif as $file){
             //     if (!empty($file->file('gif_file'))) {
@@ -1371,18 +1354,18 @@ class Admin extends Controller
             $ebook_elements->example_description = implode(',', $example_gifs);
             $ebook_elements->practice_description = implode(',', $req->practice_description);
         }
-        if($req->element_name == 21) {
+        if ($req->element_name == 21) {
             $ebook_elements->example_image_text = implode(',', $req->example_image_text);
             $ebook_elements->example_description = implode(',', $req->example_description);
             $ebook_elements->practice_description = implode(',', $req->practice_description);
         }
-        if($req->element_name == 22) {
+        if ($req->element_name == 22) {
             $ebook_elements->button_text = implode('#@#', $req->button_text);
         }
-        if($req->element_name == 23) {
+        if ($req->element_name == 23) {
             $ebook_elements->button_text = implode('#@#', $req->button_text);
         }
-        if($req->element_name == 24) {
+        if ($req->element_name == 24) {
             $ebook_elements->single_button_type = $req->single_button_type;
         }
         $ebook_elements->save();
@@ -1434,7 +1417,7 @@ class Admin extends Controller
             // if ($extension1 == "png" || $extension1 == "jpeg" || $extension1 == "jpg") {
             $filename = Str::random(4) . time() . '.' . $extension1;
             $project_report->image = $req->file('image')->move(('uploads'), $filename);
-        // }
+            // }
         } else {
             $project_report->image = null;
         }
@@ -1499,7 +1482,6 @@ class Admin extends Controller
 
         $ebook_elements->save();
         return redirect('admin/add_project_report_elements' . '/' . $module_id);
-
     }
 
     // =================================use cases======================
@@ -1528,7 +1510,7 @@ class Admin extends Controller
             // if ($extension1 == "png" || $extension1 == "jpeg" || $extension1 == "jpg") {
             $filename = Str::random(4) . time() . '.' . $extension1;
             $use_case->image = $req->file('image')->move(('uploads'), $filename);
-        // }
+            // }
         } else {
             $use_case->image = null;
         }
@@ -1589,18 +1571,18 @@ class Admin extends Controller
         $use_case_elements->module_id = $module_id;
         $use_case_elements->element_id = $req->element_name;
         $use_case_elements->content = $req->content;
-        if($req->element_name == 3) {
+        if ($req->element_name == 3) {
             $use_case_elements->list_type = $req->list_type;
             // $use_case_elements->list_heading = $req->list_heading;
             $use_case_elements->list_points = implode('#@#', $req->list_points);
         }
-        if($req->element_name == 4) {
+        if ($req->element_name == 4) {
             $use_case_elements->list_type = $req->list_type;
             // $use_case_elements->list_heading = $req->list_heading;
             $use_case_elements->list_points = implode('#@#', $req->list_points);
             $use_case_elements->list_description = implode('#@#', $req->list_description);
         }
-        if($req->element_name == 5) {
+        if ($req->element_name == 5) {
             $use_case_elements->appendices_heading = implode('#@#', $req->appendices_heading);
             // $use_case_elements->list_heading = $req->list_heading;
             $use_case_elements->appendices_sub_heading = implode('#@#', $req->appendices_sub_heading);
@@ -1609,7 +1591,6 @@ class Admin extends Controller
 
         $use_case_elements->save();
         return redirect('admin/add_use_case_elements' . '/' . $module_id);
-
     }
 
 
@@ -1626,7 +1607,7 @@ class Admin extends Controller
     public function add_chapters(Request $req)
     {
         $rows = $req->no_of_rows;
-        for($i = 0; $i < $rows; $i++) {
+        for ($i = 0; $i < $rows; $i++) {
             $chapter_name = 'chapter_name' . $i;
             $chapter = new Chapter();
             $chapter->class = $req->class;
@@ -1643,7 +1624,6 @@ class Admin extends Controller
         $classes = Classes::get();
 
         return view('admin.add_chapter_videos', ['subjects' => $subjects, 'classes' => $classes]);
-
     }
     public function add_chapter_videos(Request $req)
     {
@@ -1660,7 +1640,7 @@ class Admin extends Controller
         }
 
         $rows = $req->no_of_rows;
-        for($i = 0 ; $i < $rows; $i++) {
+        for ($i = 0; $i < $rows; $i++) {
             $videos = new Chapter_video();
             $videos->chapter_id = $req->chapter;
             $videos->video_name = $req->video_name[$i];
@@ -1670,13 +1650,11 @@ class Admin extends Controller
 
         session()->put('success', "Video Added!");
         return redirect('admin/add_chapter_videos');
-
     }
     public function get_chapters(Request $req)
     {
         $chapters = Chapter::where('subject', $req->subject_id)->get();
         return response()->json($chapters);
-
     }
 
     // public function get_subjects(Request $req){
@@ -1696,7 +1674,6 @@ class Admin extends Controller
         $classes = Classes::get();
 
         return view('admin.school_courses', ['subjects' => $subjects, 'classes' => $classes]);
-
     }
 
     public function add_school_subject_view()
@@ -1706,9 +1683,8 @@ class Admin extends Controller
         $data = [
             'subjects' => $result,
             'classes' => $classes
-           ];
+        ];
         return view('admin.add_school_subject', ['data' => $data]);
-
     }
     public function add_school_subject(Request $req)
     {
@@ -1731,7 +1707,6 @@ class Admin extends Controller
 
         session()->put('success', "Subject Added!");
         return redirect('/admin/school_courses');
-
     }
 
     public function school_assesments()
@@ -1740,7 +1715,6 @@ class Admin extends Controller
 
 
         return view('admin.school_assesments', ['subjects' => $subjects]);
-
     }
 
     public function create_school_assesments_view()
@@ -1759,7 +1733,7 @@ class Admin extends Controller
         $assesment->chapter_id = $req->chapter;
         $assesment->video_id = $req->video;
 
-        if(!empty($req->code)) {
+        if (!empty($req->code)) {
             $assesment->question_code = $req->code;
         }
         if (!empty($req->file('question_image'))) {
@@ -1767,7 +1741,7 @@ class Admin extends Controller
             // if ($extension1 == "png" || $extension1 == "jpeg" || $extension1 == "jpg") {
             $filename = Str::random(4) . time() . '.' . $extension1;
             $assesment->question_image = $req->file('question_image')->move(('uploads'), $filename);
-        // }
+            // }
         } else {
             $assesment->question_image = null;
         }
@@ -1784,7 +1758,7 @@ class Admin extends Controller
             // if ($extension1 == "png" || $extension1 == "jpeg" || $extension1 == "jpg") {
             $filename = Str::random(4) . time() . '.' . $extension1;
             $assesment->option1_img = $req->file('option1_img')->move(('uploads'), $filename);
-        // }
+            // }
         } else {
             $assesment->option1_img = null;
         }
@@ -1793,7 +1767,7 @@ class Admin extends Controller
             // if ($extension1 == "png" || $extension1 == "jpeg" || $extension1 == "jpg") {
             $filename = Str::random(4) . time() . '.' . $extension1;
             $assesment->option2_img = $req->file('option2_img')->move(('uploads'), $filename);
-        // }
+            // }
         } else {
             $assesment->option2_img = null;
         }
@@ -1803,7 +1777,7 @@ class Admin extends Controller
             // if ($extension1 == "png" || $extension1 == "jpeg" || $extension1 == "jpg") {
             $filename = Str::random(4) . time() . '.' . $extension1;
             $assesment->option3_img = $req->file('option3_img')->move(('uploads'), $filename);
-        // }
+            // }
         } else {
             $assesment->option3_img = null;
         }
@@ -1812,7 +1786,7 @@ class Admin extends Controller
             // if ($extension1 == "png" || $extension1 == "jpeg" || $extension1 == "jpg") {
             $filename = Str::random(4) . time() . '.' . $extension1;
             $assesment->option4_img = $req->file('option4_img')->move(('uploads'), $filename);
-        // }
+            // }
         } else {
             $assesment->option4_img = null;
         }
@@ -1828,7 +1802,7 @@ class Admin extends Controller
 
         $data = [
             'assessments' => $assessments,
-           ];
+        ];
         return view('admin/view_school_assesments', ['data' => $data]);
     }
 
@@ -1858,7 +1832,7 @@ class Admin extends Controller
         $school = School::get();
         $classes = Classes::get();
 
-        return view('sub_admin.add_student', ['school' => $school,'classes' => $classes]);
+        return view('sub_admin.add_student', ['school' => $school, 'classes' => $classes]);
     }
 
     public function add_student(Request $req)
@@ -1903,7 +1877,7 @@ class Admin extends Controller
             // if ($extension1 == "png" || $extension1 == "jpeg" || $extension1 == "jpg") {
             $filename = Str::random(4) . time() . '.' . $extension1;
             $school->school_image = $req->file('school_image')->move(('uploads'), $filename);
-        // }
+            // }
         } else {
             $school->school_image = null;
         }
@@ -1912,7 +1886,7 @@ class Admin extends Controller
             // if ($extension1 == "png" || $extension1 == "jpeg" || $extension1 == "jpg") {
             $filename = Str::random(4) . time() . '.' . $extension1;
             $school->signatory_aadhar = $req->file('signatory_aadhar')->move(('uploads'), $filename);
-        // }
+            // }
         } else {
             $school->signatory_aadhar = null;
         }
@@ -1921,7 +1895,7 @@ class Admin extends Controller
             // if ($extension1 == "png" || $extension1 == "jpeg" || $extension1 == "jpg") {
             $filename = Str::random(4) . time() . '.' . $extension1;
             $school->auth_image = $req->file('auth_image')->move(('uploads'), $filename);
-        // }
+            // }
         } else {
             $school->auth_image = null;
         }
@@ -1930,7 +1904,7 @@ class Admin extends Controller
             // if ($extension1 == "png" || $extension1 == "jpeg" || $extension1 == "jpg") {
             $filename = Str::random(4) . time() . '.' . $extension1;
             $school->mou = $req->file('mou')->move(('uploads'), $filename);
-        // }
+            // }
         } else {
             $school->mou = null;
         }
@@ -1939,7 +1913,7 @@ class Admin extends Controller
             // if ($extension1 == "png" || $extension1 == "jpeg" || $extension1 == "jpg") {
             $filename = Str::random(4) . time() . '.' . $extension1;
             $school->nda = $req->file('nda')->move(('uploads'), $filename);
-        // }
+            // }
         } else {
             $school->nda = null;
         }
@@ -1948,7 +1922,7 @@ class Admin extends Controller
             // if ($extension1 == "png" || $extension1 == "jpeg" || $extension1 == "jpg") {
             $filename = Str::random(4) . time() . '.' . $extension1;
             $school->declaration_form = $req->file('declaration_form')->move(('uploads'), $filename);
-        // }
+            // }
         } else {
             $school->declaration_form = null;
         }
@@ -1957,7 +1931,7 @@ class Admin extends Controller
             // if ($extension1 == "png" || $extension1 == "jpeg" || $extension1 == "jpg") {
             $filename = Str::random(4) . time() . '.' . $extension1;
             $school->other_document = $req->file('other_document')->move(('uploads'), $filename);
-        // }
+            // }
         } else {
             $school->other_document = null;
         }
@@ -2055,7 +2029,7 @@ class Admin extends Controller
             // if ($extension1 == "png" || $extension1 == "jpeg" || $extension1 == "jpg") {
             $filename = Str::random(4) . time() . '.' . $extension1;
             $school->cancelled_cheque = $req->file('cancelled_cheque')->move(('uploads'), $filename);
-        // }
+            // }
         } else {
             $school->cancelled_cheque = null;
         }
@@ -2178,7 +2152,7 @@ class Admin extends Controller
             // if ($extension1 == "png" || $extension1 == "jpeg" || $extension1 == "jpg") {
             $filename = Str::random(4) . time() . '.' . $extension1;
             $school->package_invoice = $req->file('package_invoice')->move(('uploads'), $filename);
-        // }
+            // }
         } else {
             $school->package_invoice = null;
         }
@@ -2189,7 +2163,6 @@ class Admin extends Controller
 
 
         return redirect('/admin/schools');
-
     }
 
 
@@ -2255,7 +2228,7 @@ class Admin extends Controller
 
         $data = [
             'all_test' => $all_test,
-           ];
+        ];
         return view('admin/school_tests', ['data' => $data]);
     }
     public function add_school_questions_view()
@@ -2270,7 +2243,7 @@ class Admin extends Controller
         $question->class_id = $req->class;
         $question->subject_id = $req->subject;
 
-        if(!empty($req->code)) {
+        if (!empty($req->code)) {
             $question->question_code = $req->code;
         }
         if (!empty($req->file('question_image'))) {
@@ -2278,7 +2251,7 @@ class Admin extends Controller
             // if ($extension1 == "png" || $extension1 == "jpeg" || $extension1 == "jpg") {
             $filename = Str::random(4) . time() . '.' . $extension1;
             $question->question_image = $req->file('question_image')->move(('uploads'), $filename);
-        // }
+            // }
         } else {
             $question->question_image = null;
         }
@@ -2294,7 +2267,7 @@ class Admin extends Controller
             // if ($extension1 == "png" || $extension1 == "jpeg" || $extension1 == "jpg") {
             $filename = Str::random(4) . time() . '.' . $extension1;
             $question->option1_img = $req->file('option1_img')->move(('uploads'), $filename);
-        // }
+            // }
         } else {
             $question->option1_img = null;
         }
@@ -2303,7 +2276,7 @@ class Admin extends Controller
             // if ($extension1 == "png" || $extension1 == "jpeg" || $extension1 == "jpg") {
             $filename = Str::random(4) . time() . '.' . $extension1;
             $question->option2_img = $req->file('option2_img')->move(('uploads'), $filename);
-        // }
+            // }
         } else {
             $question->option2_img = null;
         }
@@ -2313,7 +2286,7 @@ class Admin extends Controller
             // if ($extension1 == "png" || $extension1 == "jpeg" || $extension1 == "jpg") {
             $filename = Str::random(4) . time() . '.' . $extension1;
             $question->option3_img = $req->file('option3_img')->move(('uploads'), $filename);
-        // }
+            // }
         } else {
             $question->option3_img = null;
         }
@@ -2322,7 +2295,7 @@ class Admin extends Controller
             // if ($extension1 == "png" || $extension1 == "jpeg" || $extension1 == "jpg") {
             $filename = Str::random(4) . time() . '.' . $extension1;
             $question->option4_img = $req->file('option4_img')->move(('uploads'), $filename);
-        // }
+            // }
         } else {
             $question->option4_img = null;
         }
@@ -2336,7 +2309,6 @@ class Admin extends Controller
         $classes = Classes::get();
 
         return view('admin/create_school_test', ['classes' => $classes]);
-
     }
 
     public function create_school_test(Request $req)
@@ -2351,7 +2323,7 @@ class Admin extends Controller
             // if ($extension1 == "png" || $extension1 == "jpeg" || $extension1 == "jpg") {
             $filename = Str::random(4) . time() . '.' . $extension1;
             $test->image = $req->file('quiz_photo')->move(('uploads'), $filename);
-        // }
+            // }
         } else {
             $test->image = null;
         }
@@ -2370,7 +2342,7 @@ class Admin extends Controller
         $questions = explode(',', $test->questions);
         $test_masters = School_test_master::where('subject_id', $subject)->where('class_id', $test->class_id)->get();
 
-        return view('admin/add_questions_to_test', ['test_id' => $test_id,'test_masters' => $test_masters,'questions' => $questions,'subject' => $subject]);
+        return view('admin/add_questions_to_test', ['test_id' => $test_id, 'test_masters' => $test_masters, 'questions' => $questions, 'subject' => $subject]);
     }
 
     public function add_questions_to_test($test_id, $que_id)
@@ -2378,14 +2350,14 @@ class Admin extends Controller
 
         $last_quiz = School_test::find($test_id);
         $questions = $last_quiz->questions;
-        if($questions == null) {
+        if ($questions == null) {
             $questions = $que_id;
         } else {
             $questions = $questions . ",$que_id";
         }
 
         School_test::where('id', $last_quiz->id)->update([
-        'questions' => $questions,
+            'questions' => $questions,
         ]);
 
         return redirect('admin/add_questions_to_test_view/' . $test_id);
@@ -2396,7 +2368,7 @@ class Admin extends Controller
         $last_quiz = School_test::find($test_id);
         $questions = explode(',', $last_quiz->questions);
         $new_question = 0;
-        foreach($questions as $question) {
+        foreach ($questions as $question) {
             if ((int)$question != $que_id) {
                 $value[] = $question;
                 $new_question = implode(',', $value);
@@ -2408,7 +2380,7 @@ class Admin extends Controller
         // dd($new_question);
         School_test::where('id', $last_quiz->id)->update([
             'questions' => $new_question,
-            ]);
+        ]);
 
         session()->put('success', "Question Added to Test!");
         return redirect('admin/add_questions_to_test_view/' . $test_id);
@@ -2421,7 +2393,7 @@ class Admin extends Controller
 
         $data = [
             'result' => $result,
-           ];
+        ];
 
         return view('admin/school_test_results', ['data' => $data]);
     }
@@ -2434,23 +2406,22 @@ class Admin extends Controller
         $new_question = 0;
         $test_masters = School_test_master::whereIn('id', $questions)->get();
 
-        return view('admin/school_test_details', ['test' => $test,'test_masters' => $test_masters]);
+        return view('admin/school_test_details', ['test' => $test, 'test_masters' => $test_masters]);
     }
 
     public function school_test_master(Request $req)
     {
         $classes = Classes::get();
-        if($req->subject) {
+        if ($req->subject) {
             $quiz_master = School_test_master::where('subject_id', $req->subject)->get();
-
         } else {
             $quiz_master = School_test_master::get();
         }
         $data = [
             'question' => $quiz_master,
-           ];
+        ];
 
-        return view('admin/school_test_master', ['data' => $data,'classes' => $classes]);
+        return view('admin/school_test_master', ['data' => $data, 'classes' => $classes]);
     }
 
     public function school_mini_projects()
@@ -2479,7 +2450,7 @@ class Admin extends Controller
             // if ($extension1 == "png" || $extension1 == "jpeg" || $extension1 == "jpg") {
             $filename = Str::random(4) . time() . '.' . $extension1;
             $projects->project_image = $req->file('project_image')->move(('uploads'), $filename);
-        // }
+            // }
         } else {
             $projects->project_image = null;
         }
@@ -2511,7 +2482,6 @@ class Admin extends Controller
         $project_task->save();
         session()->put('success', "Task Added!");
         return redirect('admin/school_mini_projects');
-
     }
 
 
@@ -2574,7 +2544,7 @@ class Admin extends Controller
             $projects->project_image = null;
         }
         $projects->description = $req->description;
-        if($projects->save()) {
+        if ($projects->save()) {
             return ["msg" => "Project Created successfully"];
         } else {
             return ["msg" => "Project could not Created"];
@@ -2590,7 +2560,7 @@ class Admin extends Controller
         $project_task->duration = $req->duration;
         $project_task->description = $req->description;
 
-        if($project_task->save()) {
+        if ($project_task->save()) {
             return ["msg" => "Project Task Created successfully"];
         } else {
             return ["msg" => "Project Task could not Created"];
@@ -2607,7 +2577,7 @@ class Admin extends Controller
         // the above 3 fileds are not mandatory i have stored in the db. because this videoid is unique we can get the data only from it
         $assesment->video_id = $req->video;
 
-        if(!empty($req->code)) {
+        if (!empty($req->code)) {
             $assesment->question_code = $req->code;
         }
 
@@ -2618,7 +2588,7 @@ class Admin extends Controller
         $assesment->option4 = $req->option4;
         $assesment->answer = $req->selectedOption;
 
-        if($assesment->save()) {
+        if ($assesment->save()) {
             return ["msg" => "Assessments Created successfully"];
         } else {
             return ["msg" => "Assessments could not Created"];
@@ -2629,7 +2599,7 @@ class Admin extends Controller
         $question = new School_test_master();
         $question->class_id = $req->class;
         $question->subject_id = $req->subject;
-        if(!empty($req->code)) {
+        if (!empty($req->code)) {
             $question->question_code = $req->code;
         }
 
@@ -2639,7 +2609,7 @@ class Admin extends Controller
         $question->option3 = $req->option3;
         $question->option4 = $req->option4;
         $question->answer = $req->selectedOption;
-        if($question->save()) {
+        if ($question->save()) {
             return ["msg" => "Question Created successfully"];
         } else {
             return ["msg" => "Question could not Created"];
@@ -2665,7 +2635,7 @@ class Admin extends Controller
             $test->image = null;
         }
         $test->description = $req->description;
-        if($test->save()) {
+        if ($test->save()) {
             return ["test" => $test, "msg" => "test Created successfully"];
         } else {
             return ["msg" => "test could not Created"];
@@ -2676,7 +2646,7 @@ class Admin extends Controller
         $question_ids = $req->selectedQuestionsId;
         // dd($question_ids);
         School_test::where('id', $req->test_id)->update([
-        'questions' => $question_ids,
+            'questions' => $question_ids,
         ]);
         return ["msg" => "Test Created successfully"];
     }
@@ -2687,7 +2657,7 @@ class Admin extends Controller
         $new_question = 0;
         $test_questions = School_test_master::whereIn('id', $questions)->get();
 
-        return ['test' => $test,'test_questions' => $test_questions];
+        return ['test' => $test, 'test_questions' => $test_questions];
     }
     public function get_test_results($test_id)
     {
@@ -2707,7 +2677,7 @@ class Admin extends Controller
         } else {
             $subject->subject_image = null;
         }
-        if($subject->save()) {
+        if ($subject->save()) {
             return ["msg" => "Subject Created successfully"];
         } else {
             return ["msg" => "Subject could not Created"];
@@ -2725,7 +2695,6 @@ class Admin extends Controller
         }
 
         return ["msg" => "Chapter Created successfully"];
-
     }
     public function create_video(Request $req)
     {
@@ -2752,7 +2721,6 @@ class Admin extends Controller
         }
 
         return ["msg" => "video Created successfully"];
-
     }
 
     public function get_child($parent_id)
@@ -2766,8 +2734,134 @@ class Admin extends Controller
         // $assessments = School_assesment::where('subject_id', $subject_id)->get();
         $assessments = School_assesment::with('class', 'subject', 'chapter', 'video')->where('subject_id', $subject_id)->get();
 
-      return $assessments;
+        return $assessments;
     }
 
+    //Rakshith
+    public function api_all_students()
+    {
+        $students = School_student::with('school', 'class')->get();
 
+        return $students;
+    }
+
+    public function api_get_schools()
+    {
+        $school = School::all();
+        return $school;
+    }
+
+    public function api_get_classes()
+    {
+        $classes = Classes::all();
+        return $classes;
+    }
+
+    // public function api_add_student(Request $req)
+    // {
+    //     $auth = new User();
+    //     $auth->name = $req->name;
+    //     $auth->type = 'school_student';
+    //     $auth->password = Hash::make('abc123');
+    //     $authres = $auth->save();
+
+    //     $student = new School_student();
+    //     $student->auth_id = (int)$auth->id;
+    //     $student->name = $req->name;
+    //     $student->class_id = $req->class;
+    //     $student->school_id = $req->school;
+    //     $student->section_id = $req->section;
+    //     $studentres = $student->save();
+
+    //     if ($authres && $studentres) {
+    //         return 1;
+    //     }
+    // }
+
+    public function api_add_student(Request $req)
+    {
+        $auth = new User();
+        $auth->name = $req->name;
+        $auth->type = 'school_student';
+        $auth->password = Hash::make('abc123');
+        $authres = $auth->save();
+
+        $school = School::where('school_name', $req->school)->first();
+
+        if (!$school) {
+            return response()->json(['error' => 'School not found'], 404);
+        }
+
+        $class_id = Classes::where('class', $req->className)->first();
+
+        $student = new School_student();
+        $student->auth_id = (int)$auth->id;
+        $student->name = $req->name;
+        $student->class_id = $class_id->id;
+        $student->school_id = $school->id;
+        $student->section_id = $req->section;
+        $studentres = $student->save();
+
+        if ($authres && $studentres) {
+            return response()->json(['success' => true]);
+        } else {
+            return response()->json(['error' => 'Failed to save student'], 500);
+        }
+    }
+
+    public function api_all_teachers()
+    {
+        $teachers = Teacher::with('user')->get();
+
+        return $teachers;
+    }
+
+    public function apigetClasses()
+    {
+        $classes = Classes::all();
+        return $classes;
+    }
+
+    public function apigetSubjects($class_id)
+    {
+        $subjects = School_subject::where('class_id', $class_id)->get();
+        return response()->json($subjects);
+    }
+
+    public function api_add_teacher(Request $req)
+    {
+        $auth = new User();
+        $auth->name = $req->name;
+        $auth->email = $req->email;
+        $auth->phone = $req->phone;
+        $auth->type = 'teacher';
+        $auth->password = Hash::make($req->password);
+        $authres = $auth->save();
+
+
+        $classArray = $req->input('class');
+        $subjectArray = $req->input('subject');
+
+        // Combine class and subject data into an array
+        $dataToStore = [];
+
+        for ($i = 0; $i < count($classArray); $i++) {
+            $dataToStore[] = [
+                'class_id' => $classArray[$i],
+                'subject_id' => $subjectArray[$i],
+            ];
+        }
+
+        // Convert the array to JSON
+        $jsonData = json_encode($dataToStore);
+
+        $teacher = new Teacher();
+        $teacher->class_and_subject = $jsonData;
+        $teacher->auth_id = $auth->id;
+        $teachres = $teacher->save();
+
+        if ($authres && $teachres) {
+            return $classArray;
+        }
+    }
 }
