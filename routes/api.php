@@ -104,3 +104,5 @@ Route::get('/school/api_all_teachers', [Admin::class, 'api_all_teachers']);
 Route::get('/admin/apigetClasses', [Admin::class, 'apigetClasses']);
 Route::get('/admin/apigetSubjects/{class_id}', [Admin::class, 'apigetSubjects']);
 Route::post('/school/api_add_teacher', [Admin::class, 'api_add_teacher']);
+Route::post("/student/api_register", [Admin::class, 'api_register']);
+Route::post("/admin/api_add_school", [Admin::class, 'api_add_school']);

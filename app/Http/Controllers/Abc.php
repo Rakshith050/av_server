@@ -55,13 +55,13 @@ class Abc extends Controller
         $tests = [];
         foreach ($subjects as $subject) {
             $latestTest = School_test::where('subject_id', $subject->id)
-                                    ->latest()
-                                    ->first();
+                ->latest()
+                ->first();
             $tests[] = $latestTest;
         }
         // dd($tests);
 
-        return view('school_student.all_subjects', ['subjects' => $subjects,'tests' => $tests]);
+        return view('school_student.all_subjects', ['subjects' => $subjects, 'tests' => $tests]);
     }
 
     public function subject_live_stream($subject_id, $tab_id)
@@ -76,14 +76,13 @@ class Abc extends Controller
         $assesments = School_assesment::with('class', 'subject', 'chapter', 'video')->where('subject_id', $subject_id)->get();
 
         $Video_play_back = School_video_play_back::where('user_id', session('rexkod_user_id'))
-        ->where('subject_id', $subject_id)
-        ->latest('updated_at')
-        ->first();
+            ->where('subject_id', $subject_id)
+            ->latest('updated_at')
+            ->first();
         // Now, $video_play_back contains the last updated record with the specified course_id
-        if($Video_play_back) {
+        if ($Video_play_back) {
             $video_details = Chapter_video::where('id', $Video_play_back->video_id)->first();
             $timestamp = $Video_play_back->video_time_stamp;
-
         } else {
             $chapter = Chapter::where('subject', $subject_id)->first();
             $video_details = Chapter_video::where('chapter_id', $chapter->id)->first();
@@ -91,20 +90,20 @@ class Abc extends Controller
         }
 
         $test = School_test::where('subject_id', $subject_id)
-                ->latest()
-                ->first();
+            ->latest()
+            ->first();
         $test_result = School_test_result::where('test_id', $test->id)
-                ->where('user_id', session('rexkod_user_id'))
-                ->latest()
-                ->first();
+            ->where('user_id', session('rexkod_user_id'))
+            ->latest()
+            ->first();
 
         $mini_projects = School_mini_project::where('subject_id', $subject_id)->get();
 
         $assesments_result = School_assesment_result::where('user_id', session('rexkod_user_id'))->distinct()
-        ->pluck('video_id');
+            ->pluck('video_id');
         $assesments_given = Chapter_video::whereIn('id', $assesments_result)
-        ->select('id', 'video_name') // Adjust the columns you want to select
-        ->get();
+            ->select('id', 'video_name') // Adjust the columns you want to select
+            ->get();
 
         $notes = School_note::where('student_id', session('rexkod_user_id'))->where('subject_id', $subject_id)->get();
 
@@ -127,7 +126,7 @@ class Abc extends Controller
             'sent_messages' => $sent_messages,
             'received_messages' => $received_messages,
         ];
-        return view('school_student/subject_live_stream', ['data' => $data,'video_details' => $video_details,'video_timestamp' => $timestamp,'test' => $test,'test_result' => $test_result]);
+        return view('school_student/subject_live_stream', ['data' => $data, 'video_details' => $video_details, 'video_timestamp' => $timestamp, 'test' => $test, 'test_result' => $test_result]);
     }
 
 
@@ -137,7 +136,7 @@ class Abc extends Controller
             ->where('video_id', $req->videoId)
             ->where('subject_id', $req->subjectId)
             ->first();
-        if($timestamp) {
+        if ($timestamp) {
             $timestamp->video_time_stamp = $req->timestamp;
             $timestamp->status = 0;
             // $timestamp->updated_at = Carbon::now();
@@ -160,7 +159,7 @@ class Abc extends Controller
             ->where('video_id', $req->videoId)
             ->first();
 
-        if($timestamp) {
+        if ($timestamp) {
             $timestamp->video_time_stamp = $req->timestamp;
             $timestamp->status = 1;
             // $timestamp->updated_at = Carbon::now();
@@ -175,8 +174,8 @@ class Abc extends Controller
         // $assesment = Assesment::where('subject_id', $subject)->where('section_name', $section)->where('video', $video)->get();
 
         $assesment = School_assesment::where('subject_id', $subject_id)->where('chapter_id', $chapter_id)->where('video_id', $video_id)->inRandomOrder()
-        ->take(5)
-        ->get();
+            ->take(5)
+            ->get();
 
         $data = [
             'subject_id' => $subject_id,
@@ -198,20 +197,19 @@ class Abc extends Controller
         $count = 1;
         $score = 0;
         foreach ($assesments as $assesment) {
-            if(in_array($assesment->id, $req->questions)) {
+            if (in_array($assesment->id, $req->questions)) {
                 $answer_selected[] = $req->{'que_' . $count . '_selected'};
-                if($assesment->answer == $req->{'que_' . $count . '_selected'}) {
+                if ($assesment->answer == $req->{'que_' . $count . '_selected'}) {
                     $score++;
                 }
                 $questions[] = $assesment->id;
                 $count++;
             }
-
         }
         $new_answer = implode(',', $answer_selected);
         $new_questions = implode(',', $questions);
         // dd($new_answer);
-        $result->user_answer =	$new_answer;
+        $result->user_answer =    $new_answer;
 
         $result->score = $score;
 
@@ -220,10 +218,9 @@ class Abc extends Controller
         $result->chapter_id = $chapter;
         $result->video_id = $video;
 
-        if($result->save()) {
+        if ($result->save()) {
             session()->put('success', "Assesment submitted successfully !!");
             return redirect('assesment_result_school/' . $result->id);
-
         } else {
             session()->put('failed', 'Failed, Try again!');
             return redirect()->back();
@@ -237,7 +234,7 @@ class Abc extends Controller
 
         $data = [
             'result' => $result,
-           ];
+        ];
         return view('school_student/assesment_result', ['data' => $data]);
     }
 
@@ -254,8 +251,8 @@ class Abc extends Controller
         $data = [
             'subject_id' => $subject_id,
             'all_quiz' => $all_quiz,
-           ];
-        return view('school_student/take_test', ['data' => $data,'question_id' => $question_id,'total_count' => $total_count,'quiz_masters' => $quiz_masters]);
+        ];
+        return view('school_student/take_test', ['data' => $data, 'question_id' => $question_id, 'total_count' => $total_count, 'quiz_masters' => $quiz_masters]);
     }
 
     public function school_test_submit(Request $req, $id)
@@ -277,7 +274,7 @@ class Abc extends Controller
         foreach ($all_questions as $question) {
             $test_master = School_test_master::where('id', $question)->first();
             $test_answer = $test_master->answer;
-            if($test_answer == $req->{'que_' . $count2 . '_selected'}) {
+            if ($test_answer == $req->{'que_' . $count2 . '_selected'}) {
                 $score++;
                 $count2++;
             }
@@ -290,7 +287,7 @@ class Abc extends Controller
         } else {
             $score_percentage = 0;
         }
-        $result->user_answer =	$new_answer;
+        $result->user_answer =    $new_answer;
         $result->test_id = $id;
         $result->questions = $test->questions;
         $result->score = $score;
@@ -298,10 +295,9 @@ class Abc extends Controller
         $result->user_id = session('rexkod_user_id');
         $result->save();
 
-        if($result->save()) {
+        if ($result->save()) {
             session()->put('success', "Test submitted successfully !!");
             return redirect('view_school_test_score/' . $id . '/' . $req->subject_id);
-
         } else {
             session()->put('failed', 'Failed, Try again!');
             return redirect()->back();
@@ -312,12 +308,12 @@ class Abc extends Controller
     {
         $subject = School_subject::where('id', $subject_id)->first();
         $result = School_test_result::where('test_id', $id)
-                            ->where('user_id', session('rexkod_user_id'))
-                            ->latest()->first();
+            ->where('user_id', session('rexkod_user_id'))
+            ->latest()->first();
         $data = [
             'subject' => $subject,
             'result' => $result,
-           ];
+        ];
 
         return view('school_student/view_test_score', ['data' => $data]);
     }
@@ -350,7 +346,7 @@ class Abc extends Controller
         $project_process->student_id = session('rexkod_user_id');
         $project_process->project_id  = $project_task->project_id;
         $project_process->task_id  = $id;
-        $project_process->status  = 1 ;
+        $project_process->status  = 1;
         $project_process->save();
         $data = [
             'project_task' => $project_task,
@@ -364,7 +360,7 @@ class Abc extends Controller
     public function update_school_project_task_status($id)
     {
         School_project_process::where('id', $id)
-                    ->update(['status' => 2]);
+            ->update(['status' => 2]);
         $project_process = School_project_process::where('id', $id)->first();
 
         return redirect('view_school_project/' . $project_process->project_id);
@@ -374,8 +370,8 @@ class Abc extends Controller
     {
         $project_task = School_project_task::where('id', $id)->first();
         $project_process = School_project_process::where('student_id', session('rexkod_user_id'))
-                                                            ->where('project_id', $project_task->project_id)
-                                                            ->where('task_id', $id)->first();
+            ->where('project_id', $project_task->project_id)
+            ->where('task_id', $id)->first();
         $data = [
             'project_task' => $project_task,
             'code' => $lab_code,
@@ -398,7 +394,6 @@ class Abc extends Controller
         // session()->put('success', 'Message sent successfully');
 
         return redirect('subject_live_stream/' . $req->subject_id . '/1');
-
     }
 
     public function school_qna_view()
@@ -439,7 +434,7 @@ class Abc extends Controller
         // $message = new Message();
 
         $qna = School_qna::where('question', $req->message)->first();
-        if($qna) {
+        if ($qna) {
             // dd($qna->answer);
             $message = new School_message();
             $message->sender_id = Session::get('rexkod_user_id');
@@ -447,7 +442,7 @@ class Abc extends Controller
             $message->message = $qna->question;
             $message->save();
 
-            if($qna->answer) {
+            if ($qna->answer) {
                 $message = new School_message();
                 $message->sender_id = $qna->a_created_by;
                 $message->receiver_id = Session::get('rexkod_user_id');
@@ -465,7 +460,6 @@ class Abc extends Controller
         // session()->put('success', 'Message sent successfully');
 
         return redirect('subject_live_stream/' . $req->subject_id . '/2');
-
     }
 
     public function school_forums()
@@ -481,14 +475,13 @@ class Abc extends Controller
         $forumQuestion->student_id = Session::get('rexkod_user_id');
         $forumQuestion->question = $request->question;
         $forumQuestion->created_at = date('Y-m-d H:i:s');
-        if($forumQuestion->save()) {
+        if ($forumQuestion->save()) {
             session()->put('success', "Your Question submitted successfully");
             return redirect('school_forums');
         } else {
             session()->put('failed', 'Your Question not submitted, Try again!');
             return redirect()->back();
         }
-
     }
 
 
@@ -502,8 +495,7 @@ class Abc extends Controller
 
     public function add_school_forum()
     {
-        return view('school_student.add_forum', [
-        ]);
+        return view('school_student.add_forum', []);
     }
 
     public function create_school_forum(Request $request)
@@ -512,15 +504,13 @@ class Abc extends Controller
         $forumQuestion->student_id = Session::get('rexkod_user_id');
         $forumQuestion->question = $request->question;
         $forumQuestion->created_at = date('Y-m-d H:i:s');
-        if($forumQuestion->save()) {
+        if ($forumQuestion->save()) {
             session()->put('success', "Your Question submitted successfully");
             return redirect('school_forums');
-
         } else {
             session()->put('failed', 'Your Question not submitted, Try again!');
             return redirect()->back();
         }
-
     }
     public function answer_school_forum($question_id)
     {
@@ -535,15 +525,13 @@ class Abc extends Controller
         $forumAnswer->student_id = Session::get('rexkod_user_id');
         $forumAnswer->answer = $request->answer;
         $forumAnswer->created_at = date('Y-m-d H:i:s');
-        if($forumAnswer->save()) {
+        if ($forumAnswer->save()) {
             session()->put('success', "Your answer submitted successfully");
             return redirect("view_school_forum/" . $request->forum_question_id);
-
         } else {
             session()->put('failed', 'Your answer not submitted, Try again!');
             return redirect()->back();
         }
-
     }
 
 
@@ -558,11 +546,12 @@ class Abc extends Controller
 
         return $subjects;
     }
+
     public function login(Request $req)
     {
-        if(is_numeric($req->email)) {
+        if (is_numeric($req->email)) {
             $user = User::where('id', $req->email)->first();
-            if($user && $user->type == 'school_student' && Hash::check($req->password, $user->password)) {
+            if ($user && $user->type == 'school_student' && Hash::check($req->password, $user->password)) {
                 $student = School_student::where('auth_id', $user->id)->first();
                 $data = [
                     'student' => $student,
@@ -570,7 +559,7 @@ class Abc extends Controller
                 ];
                 return $data;
             } else {
-                return ["msg" => "Invalid email or password"];
+                return ["msg" => "Invalid credentials"];
             }
         } else {
             $user = User::where('email', $req->email)->first();
@@ -627,7 +616,6 @@ class Abc extends Controller
             //     return redirect('/login');
             // }
         }
-
     }
 
     //  public function register(Request $req)
@@ -713,7 +701,7 @@ class Abc extends Controller
         $qna->question = $req->question;
         $qna->q_created_by = $req->userId;
 
-        if($qna->save()) {
+        if ($qna->save()) {
             return ["msg" => "Question submitted"];
         } else {
             return ["msg" => "Question could not submitted"];
@@ -726,14 +714,11 @@ class Abc extends Controller
         $forumQuestion->student_id = $req->userId;
         $forumQuestion->question = $req->question;
         $forumQuestion->created_at = date('Y-m-d H:i:s');
-        if($forumQuestion->save()) {
+        if ($forumQuestion->save()) {
             return ["msg" => "Question submitted"];
         } else {
             return ["msg" => "Question could not submitted"];
-
         }
-
-
     }
     public function search_school_questions($data)
     {
@@ -756,7 +741,6 @@ class Abc extends Controller
             ->where('question', 'like', $data . '%')
             ->get();
         return $questions;
-
     }
 
     public function get_school_forum_single($question_id)
@@ -774,25 +758,22 @@ class Abc extends Controller
         $forumAnswer->student_id = $request->userId;
         $forumAnswer->answer = $request->answer;
         $forumAnswer->created_at = date('Y-m-d H:i:s');
-        if($forumAnswer->save()) {
+        if ($forumAnswer->save()) {
             return ["msg" => "Answer submitted"];
         } else {
             return ["msg" => "Answer could not submitted"];
-
         }
-
     }
 
     public function connect_parent(Request $req)
     {
         $parent = User::where('parent_code', $req->parentCode)->first();
-        if($parent->parent_code) {
+        if ($parent->parent_code) {
             $student = User::where('id', $req->userId)->first();
             $student->parent_id = $parent->id;
             $student->save();
-            return ['parent' => $parent,"msg" => "Parent Connected"];
+            return ['parent' => $parent, "msg" => "Parent Connected"];
         }
-
     }
     public function get_parent($parent_id)
     {
@@ -812,14 +793,13 @@ class Abc extends Controller
         $assesments = School_assesment::with('class', 'subject', 'chapter', 'video')->where('subject_id', $subject_id)->get();
 
         $Video_play_back = School_video_play_back::where('user_id', $student_id)
-        ->where('subject_id', $subject_id)
-        ->latest('updated_at')
-        ->first();
+            ->where('subject_id', $subject_id)
+            ->latest('updated_at')
+            ->first();
         // Now, $video_play_back contains the last updated record with the specified course_id
-        if($Video_play_back) {
+        if ($Video_play_back) {
             $video_details = Chapter_video::where('id', $Video_play_back->video_id)->first();
             $timestamp = $Video_play_back->video_time_stamp;
-
         } else {
             $chapter = Chapter::where('subject', $subject_id)->first();
             $video_details = Chapter_video::where('chapter_id', $chapter->id)->first();
@@ -827,24 +807,24 @@ class Abc extends Controller
         }
 
         $test = School_test::where('subject_id', $subject_id)
-                ->latest()
-                ->first();
-        $test_result = [];
-        if($test) {
-            $test_result = School_test_result::where('test_id', $test->id)
-            ->where('user_id', $student_id)
             ->latest()
             ->first();
+        $test_result = [];
+        if ($test) {
+            $test_result = School_test_result::where('test_id', $test->id)
+                ->where('user_id', $student_id)
+                ->latest()
+                ->first();
         }
 
 
         $mini_projects = School_mini_project::where('subject_id', $subject_id)->get();
 
         $assesments_result = School_assesment_result::where('user_id', $student_id)->distinct()
-        ->pluck('video_id');
+            ->pluck('video_id');
         $assesments_given = Chapter_video::whereIn('id', $assesments_result)
-        ->select('id', 'video_name') // Adjust the columns you want to select
-        ->get();
+            ->select('id', 'video_name') // Adjust the columns you want to select
+            ->get();
 
         $notes = School_note::where('student_id', $student_id)->where('subject_id', $subject_id)->get();
 
@@ -880,8 +860,8 @@ class Abc extends Controller
     public function get_assesments_for_video($video_id)
     {
         $assesments = School_assesment::where('video_id', $video_id)->inRandomOrder()
-        ->take(5)
-        ->get();
+            ->take(5)
+            ->get();
         return $assesments;
     }
 
@@ -895,22 +875,22 @@ class Abc extends Controller
         $selectedQuestionIds = explode(',', $req->selectedQuestionIds);
 
         foreach ($assesments as $index => $assesment) {
-            if(in_array($assesment->id, $selectedQuestionIds)) {
-                if($assesment->answer === $req->selectedAnswers[$count]) {
+            if (in_array($assesment->id, $selectedQuestionIds)) {
+                if ($assesment->answer === $req->selectedAnswers[$count]) {
                     $score++;
                 }
                 $count++;
             }
         }
 
-        $result->user_answer =	$req->selectedAnswers;
+        $result->user_answer =    $req->selectedAnswers;
         $result->score = $score;
         $result->questions = $req->selectedQuestionIds;
         // $result->subject_id = $req->subject_id;
         // $result->chapter_id = $$req->chapter_id;
         $result->video_id = $req->video_id;
 
-        if($result->save()) {
+        if ($result->save()) {
             return $result;
         } else {
             return ["msg" => "Answer can not be submitted"];
@@ -926,14 +906,15 @@ class Abc extends Controller
             // $chapter = $video->chapter;
             // Check if the chapter is found
 
-                $chapter = Chapter::where("id",$video->chapter_id)->first();
-                $subject_id = $chapter->id;
+            $chapter = Chapter::where("id", $video->chapter_id)->first();
+            $subject_id = $chapter->id;
             // Now $subjectId contains the subject_id associated with the video
         }
         return $subject_id;
     }
 
-    public function get_tests($test_id){
+    public function get_tests($test_id)
+    {
         $all_quiz = School_test::where('id', $test_id)->first();
         $question_id = explode(',', $all_quiz->questions);
         $total_count = count($question_id);
@@ -965,8 +946,8 @@ class Abc extends Controller
             // $test_master = School_test_master::where('id', $question)->first();
             // $test_answer = $test_master->answer;
 
-            if(in_array($question->id, $selectedQuestionIds)) {
-                if($question->answer === $req->selectedAnswers[$count]) {
+            if (in_array($question->id, $selectedQuestionIds)) {
+                if ($question->answer === $req->selectedAnswers[$count]) {
                     $score++;
                 }
                 $count++;
@@ -984,7 +965,7 @@ class Abc extends Controller
         } else {
             $score_percentage = 0;
         }
-        $result->user_answer =	$req->selectedAnswers;
+        $result->user_answer =    $req->selectedAnswers;
         $result->test_id = $req->test_id;
         $result->questions = $test->questions;
         $result->score = $score;
@@ -1002,18 +983,19 @@ class Abc extends Controller
         // }
         // return redirect('view_test_score/'.$id .'/'.$req->course_id);
         return $result;
-
     }
 
 
-    public function get_project_tasks($project_id){
+    public function get_project_tasks($project_id)
+    {
         $project_tasks = School_project_task::where('project_id', $project_id)->get();
         return $project_tasks;
     }
-    public function get_project_task_todo($user_id, $project_id){
-        $project_process = School_project_process::where('student_id',$user_id)
-                                                            ->where('project_id',$project_id)
-                                                            ->get();
+    public function get_project_task_todo($user_id, $project_id)
+    {
+        $project_process = School_project_process::where('student_id', $user_id)
+            ->where('project_id', $project_id)
+            ->get();
         return $project_process;
     }
 
@@ -1024,31 +1006,34 @@ class Abc extends Controller
         $project_process->student_id = $user_id;
         $project_process->project_id  = $project_task->project_id;
         $project_process->task_id  = $id;
-        $project_process->status  = 1 ;
+        $project_process->status  = 1;
         $project_process->save();
         return ["msg" => "Project started"];
     }
     public function update_project_task_status($id)
     {
         School_project_process::where('task_id', $id)
-                    ->update(['status' => 2]);
+            ->update(['status' => 2]);
         // $project_process = School_project_process::where('id', $id)->first();
 
         return ["msg" => "Project Completed"];
     }
 
-    public function get_test_score($test_id,$user_id){
+    public function get_test_score($test_id, $user_id)
+    {
         $result = School_test_result::where('test_id', $test_id)
-        ->where('user_id', $user_id)
-        ->latest()->first();
+            ->where('user_id', $user_id)
+            ->latest()->first();
         return $result;
     }
 
-    public function get_markers(){
+    public function get_markers()
+    {
         $markers = Marker::get();
         return $markers;
     }
-    public function save_marker(Request $req){
+    public function save_marker(Request $req)
+    {
         $marker = new Marker();
         $marker->video_id = 1;
         $marker->note = $req->note;
@@ -1060,7 +1045,8 @@ class Abc extends Controller
         return $marker;
     }
 
-    public function get_student_details($user_id){
+    public function get_student_details($user_id)
+    {
         $student = School_student::where('auth_id', $user_id)->first();
         return $student;
     }

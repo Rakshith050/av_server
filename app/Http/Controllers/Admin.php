@@ -2838,9 +2838,10 @@ class Admin extends Controller
         $auth->password = Hash::make($req->password);
         $authres = $auth->save();
 
-
-        $classArray = $req->input('class');
-        $subjectArray = $req->input('subject');
+        $classInput = $req->class;
+        $subjectInput = $req->subject;
+        $classArray = explode(',', $classInput);
+        $subjectArray = explode(',', $subjectInput);
 
         // Combine class and subject data into an array
         $dataToStore = [];
@@ -2861,7 +2862,78 @@ class Admin extends Controller
         $teachres = $teacher->save();
 
         if ($authres && $teachres) {
-            return $classArray;
+            return 1;
+        }
+    }
+
+    function api_register(Request $request)
+    {
+        $auth = new User();
+
+        $result = User::where('email', $request->email)->first();
+        if ($result) {
+            return 'Email already exists';
+        } else {
+            if ($request->isParent == "true") {
+                $auth->name = $request->name;
+                $auth->phone = $request->phone;
+                $auth->email = $request->email;
+                $auth->type = 'parent';
+                $auth->password = Hash::make($request->password);
+
+                $length = 6;
+                $min = pow(10, $length - 1);
+                $max = pow(10, $length) - 1;
+                $rand_number = mt_rand($min, $max);
+                $auth->parent_code = $rand_number;
+
+                $authres = $auth->save();
+                $user = User::where('email', $request->email)->first();
+
+                if ($authres) {
+                    return $user;
+                }
+            } else {
+                $auth->name = $request->name;
+                $auth->phone = $request->phone;
+                $auth->email = $request->email;
+                $auth->type = 'student';
+                $auth->password = Hash::make($request->password);
+
+                $authres = $auth->save();
+                $user = User::where('email', $request->email)->first();
+
+                $student = new School_student();
+                $student->auth_id = $user->id;
+                $student->name = $request->name;
+                $stures = $student->save();
+
+                if ($authres && $stures) {
+                    return $user;
+                }
+            }
+        }
+    }
+
+    function api_add_school(Request $request)
+    {
+        $auth = new User();
+        $auth->name = $request->name;
+        $auth->phone = $request->phone;
+        $auth->email = $request->email;
+        $auth->type = 'sub_admin';
+        $auth->password = Hash::make($request->password);
+        $authres = $auth->save();
+
+        $school = new School();
+        $school->auth_id = $auth->id;
+        $school->school_name = $request->name;
+        $school->school_contact_no = $request->phone;
+        $school->auth_email = $request->email;
+        $schoolres = $school->save();
+
+        if ($authres && $schoolres) {
+            return 1;
         }
     }
 }
